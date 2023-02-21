@@ -1,10 +1,11 @@
-package appmongo
+package database
 
 import (
 	"context"
 	"errors"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"log"
 	"time"
 )
 
@@ -25,6 +26,9 @@ func NewDriver(config Config) (*mongo.Client, error) {
 	if err != nil {
 		return nil, err
 	}
+	log.Println("db successfully connected")
+
+	defer client.Disconnect(ctx)
 
 	return client, nil
 }

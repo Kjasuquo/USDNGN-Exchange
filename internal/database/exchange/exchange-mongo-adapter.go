@@ -3,7 +3,7 @@ package exchange
 import (
 	"context"
 	"github.com/kjasuquo/usdngn-exchange/config"
-	appmongo "github.com/kjasuquo/usdngn-exchange/internal/database"
+	"github.com/kjasuquo/usdngn-exchange/internal/database"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -23,7 +23,7 @@ type Adapter struct {
 
 func NewExchangeMongoDatabaseAdapter(config config.Config) (*Adapter, error) {
 
-	db, err := appmongo.NewDriver(appmongo.Config{
+	db, err := database.NewDriver(database.Config{
 		URI:     config.MongoURI,
 		Timeout: timeout,
 	})
