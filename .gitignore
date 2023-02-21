@@ -1,0 +1,30 @@
+# Mac OS X files
+.DS_Store
+
+# Binaries for programs and plugins
+*.exe
+*.dll
+*.so
+*.dylib
+*.db
+
+# IDE preferences folders
+/.vscode
+/.vs
+.idea/
+node_modules
+
+# environment file
+/.env
+web/console/.env
+*.env
+/internal/db/mocks/
+
+# build
+service
+
+# docker postgres data
+postgres-data
+postgres-db
+
+/deployment/postgres.yaml
