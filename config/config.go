@@ -7,9 +7,10 @@ import (
 )
 
 type Config struct {
-	PORT      string `json:"port"`
-	JWTSecret string `json:"jwt_secret"`
-	MongoURI  string `json:"mongoURI"`
+	PORT         string `json:"port"`
+	JWTSecret    string `json:"jwt_secret"`
+	MongoURI     string `json:"mongoURI"`
+	ExchangeRate string `json:"exchange_rate"`
 }
 
 // Config contains configuration for console web server.
@@ -25,10 +26,12 @@ func InitDBConfigs() Config {
 	port := os.Getenv("PORT")
 	jwtSecret := os.Getenv("JWT_SECRET")
 	mongoURI := os.Getenv("MONGO_URI")
+	exchangeRate := os.Getenv("EXCHANGE_RATE")
 
 	return Config{
-		PORT:      port,
-		JWTSecret: jwtSecret,
-		MongoURI:  mongoURI,
+		PORT:         port,
+		JWTSecret:    jwtSecret,
+		MongoURI:     mongoURI,
+		ExchangeRate: exchangeRate,
 	}
 }

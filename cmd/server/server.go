@@ -6,6 +6,7 @@ import (
 	"github.com/kjasuquo/usdngn-exchange/config"
 	"github.com/kjasuquo/usdngn-exchange/internal/controller"
 	"github.com/kjasuquo/usdngn-exchange/internal/database/exchange"
+	"github.com/kjasuquo/usdngn-exchange/internal/rates"
 	"log"
 	"net/http"
 	"os"
@@ -23,8 +24,14 @@ func Start() {
 		log.Fatalf("exchange error: %s\n", err)
 	}
 
+	rate := rates.NewRatesClient(conf)
+	if err != nil {
+		log.Fatalf("rates error: %s\n", err)
+	}
+
 	h := &controller.Handler{
 		DB:     exchangeMongoDb,
+		Rates:  rate,
 		Config: conf,
 	}
 	router := SetupRouter(h)
