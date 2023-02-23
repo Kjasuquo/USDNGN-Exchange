@@ -28,7 +28,7 @@ func NewDriver(config Config) (*mongo.Client, error) {
 	}
 	log.Println("db successfully connected")
 
-	defer client.Disconnect(ctx)
+	//defer client.Disconnect(ctx)
 
 	return client, nil
 }

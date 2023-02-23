@@ -76,3 +76,22 @@ func (h *Handler) UserProfile(c *gin.Context) {
 	}, nil)
 
 }
+
+func (h *Handler) UserBalances(c *gin.Context) {
+	user, err := h.GetUserFromContext(c)
+	if err != nil {
+		web.JSON(c, "invalid access token", http.StatusUnauthorized, nil, errors.New("invalid access_token"))
+		return
+	}
+
+	balances := struct {
+		USD float64
+		NGN float64
+	}{
+		USD: user.USDBalance,
+		NGN: user.NGNBalance,
+	}
+
+	web.JSON(c, "successful", http.StatusOK, balances, nil)
+
+}

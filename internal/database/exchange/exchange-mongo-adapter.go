@@ -11,6 +11,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"log"
 	"math/rand"
 	"time"
 )
@@ -85,6 +87,53 @@ func (a *Adapter) GetUserByEmail(ctx context.Context, email string) (*models.Use
 	}
 
 	return &user, nil
+}
+
+func (a *Adapter) UpdateBalances(ctx context.Context, email string, usdBalance, ngnBalance float64) error {
+	objId, err := primitive.ObjectIDFromHex(a.ComputeHash(email, ""))
+	if err != nil {
+		return err
+	}
+
+	_, err = a.userCol.UpdateOne(ctx, bson.M{"_id": objId}, bson.D{{"$set", bson.D{{"usd_balance", usdBalance}, {"ngn_balance", ngnBalance}}}})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (a *Adapter) CreateTransaction(ctx context.Context, transaction models.Transactions) error {
+
+	objId := primitive.NewObjectID()
+	transaction.ID = objId
+	transaction.CreatedAt = primitive.NewDateTimeFromTime(time.Now().UTC())
+
+	_, err := a.transactionCol.InsertOne(ctx, transaction)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *Adapter) GetTransaction(ctx context.Context, email string) ([]models.Transactions, error) {
+	objId, err := primitive.ObjectIDFromHex(a.ComputeHash(email, ""))
+	opts := options.Find().SetSort(bson.M{"created_at": -1})
+
+	cursor, err := a.transactionCol.Find(ctx,
+		bson.M{"user_id": objId}, opts)
+	if err != nil {
+		return nil, err
+	}
+
+	var transactions []models.Transactions
+	if err = cursor.All(ctx, &transactions); err != nil {
+		return nil, err
+	}
+
+	log.Println("transactions: ", transactions)
+
+	return transactions, nil
 }
 
 func (a *Adapter) ComputeHash(password, salt string) string {

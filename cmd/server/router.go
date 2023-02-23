@@ -14,13 +14,18 @@ func DefineRoutes(handler *controller.Handler) *gin.Engine {
 
 	r := router.Group("/api/v1")
 	{
+		r.GET("/ping", handler.Ping)
 		r.POST("/signup", handler.SignUp)
 		r.POST("/login", handler.Login)
 	}
 
 	authorized := r.Use(middleware.AuthorizeUser(handler))
 	{
-		authorized.POST("user/profile", handler.UserProfile)
+		authorized.GET("/user/profile", handler.UserProfile)
+		authorized.GET("/user/balances", handler.UserBalances)
+		authorized.POST("/transaction/sellUSD", handler.CustomerSellUSDForNGN)
+		authorized.POST("/transaction/buyUSD", handler.CustomerBuyUSDWithNGN)
+		authorized.GET("/transaction/transactions", handler.GetTransaction)
 	}
 
 	return router
