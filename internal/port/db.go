@@ -11,7 +11,6 @@ type DB interface {
 	UpdateBalances(ctx context.Context, email string, usdBalance, ngnBalance float64) error
 	CreateTransaction(ctx context.Context, transaction models.Transactions) error
 	GetTransaction(ctx context.Context, email string) ([]models.Transactions, error)
-	ComputeHash(password, salt string) string
 }
 
 type Rates interface {

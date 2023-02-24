@@ -2,12 +2,11 @@ package exchange
 
 import (
 	"context"
-	"crypto/sha512"
-	"encoding/hex"
 	"fmt"
 	"github.com/kjasuquo/usdngn-exchange/config"
 	"github.com/kjasuquo/usdngn-exchange/internal/database"
 	"github.com/kjasuquo/usdngn-exchange/internal/models"
+	"github.com/kjasuquo/usdngn-exchange/internal/services/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -49,7 +48,7 @@ func NewExchangeMongoDatabaseAdapter(config config.Config) (*Adapter, error) {
 func (a *Adapter) CreateUser(ctx context.Context, userRequest models.UserRequest) error {
 	salt := generateSalt()
 
-	objId, err := primitive.ObjectIDFromHex(a.ComputeHash(userRequest.Email, ""))
+	objId, err := primitive.ObjectIDFromHex(utils.ComputeHash(userRequest.Email, ""))
 	if err != nil {
 		return err
 	}
@@ -59,7 +58,7 @@ func (a *Adapter) CreateUser(ctx context.Context, userRequest models.UserRequest
 		FullName:     userRequest.FullName,
 		PhoneNumber:  userRequest.PhoneNumber,
 		Email:        userRequest.Email,
-		PasswordHash: a.ComputeHash(userRequest.Password, salt),
+		PasswordHash: utils.ComputeHash(userRequest.Password, salt),
 		Salt:         salt,
 		USDBalance:   100,
 		NGNBalance:   0,
@@ -75,7 +74,7 @@ func (a *Adapter) CreateUser(ctx context.Context, userRequest models.UserRequest
 }
 
 func (a *Adapter) GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
-	objId, err := primitive.ObjectIDFromHex(a.ComputeHash(email, ""))
+	objId, err := primitive.ObjectIDFromHex(utils.ComputeHash(email, ""))
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +89,7 @@ func (a *Adapter) GetUserByEmail(ctx context.Context, email string) (*models.Use
 }
 
 func (a *Adapter) UpdateBalances(ctx context.Context, email string, usdBalance, ngnBalance float64) error {
-	objId, err := primitive.ObjectIDFromHex(a.ComputeHash(email, ""))
+	objId, err := primitive.ObjectIDFromHex(utils.ComputeHash(email, ""))
 	if err != nil {
 		return err
 	}
@@ -117,7 +116,7 @@ func (a *Adapter) CreateTransaction(ctx context.Context, transaction models.Tran
 }
 
 func (a *Adapter) GetTransaction(ctx context.Context, email string) ([]models.Transactions, error) {
-	objId, err := primitive.ObjectIDFromHex(a.ComputeHash(email, ""))
+	objId, err := primitive.ObjectIDFromHex(utils.ComputeHash(email, ""))
 	opts := options.Find().SetSort(bson.M{"created_at": -1})
 
 	cursor, err := a.transactionCol.Find(ctx,
@@ -134,14 +133,6 @@ func (a *Adapter) GetTransaction(ctx context.Context, email string) ([]models.Tr
 	log.Println("transactions: ", transactions)
 
 	return transactions, nil
-}
-
-func (a *Adapter) ComputeHash(password, salt string) string {
-	hasher := sha512.New()
-	// TODO: we should throw this error
-	_, _ = hasher.Write([]byte(password + salt))
-	result := hex.EncodeToString(hasher.Sum(nil))
-	return result[:24]
 }
 
 func generateSalt() string {

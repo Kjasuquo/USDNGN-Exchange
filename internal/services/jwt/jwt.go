@@ -58,9 +58,6 @@ func ValidateAndGetClaims(tokenString string, secret string) (jwt.MapClaims, err
 // GenerateToken generates only an access token
 func GenerateToken(email string, expiryDuration time.Duration) (string, error) {
 	secret := os.Getenv("JWT_SECRET")
-	if secret == "" {
-		return "", web.New("", http.StatusInternalServerError)
-	}
 	// Generate claims
 	claims := generateClaims(email, expiryDuration)
 

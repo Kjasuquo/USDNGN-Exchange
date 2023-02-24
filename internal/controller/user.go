@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/kjasuquo/usdngn-exchange/internal/models"
 	"github.com/kjasuquo/usdngn-exchange/internal/services/jwt"
+	"github.com/kjasuquo/usdngn-exchange/internal/services/utils"
 	"github.com/kjasuquo/usdngn-exchange/internal/services/web"
 	"net/http"
 )
@@ -42,7 +43,7 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	if !(h.DB.ComputeHash(request.Password, user.Salt) == user.PasswordHash) {
+	if !(utils.ComputeHash(request.Password, user.Salt) == user.PasswordHash) {
 		web.JSON(c, "invalid password", http.StatusUnauthorized, nil, err)
 		return
 	}
