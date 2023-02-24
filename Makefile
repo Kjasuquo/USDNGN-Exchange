@@ -6,3 +6,11 @@ mock:
 
 test:
 	go test ./...
+
+up:
+	docker-compose up
+
+down:
+	docker-compose down
+
+
