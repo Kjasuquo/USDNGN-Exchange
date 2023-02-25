@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: exchange-conf
+data:
+ PORT: "8085"
+ EXCHANGE_RATE: https://staging-biz.coinprofile.co/v3/currency/rate

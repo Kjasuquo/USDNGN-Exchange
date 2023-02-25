@@ -2,7 +2,10 @@
 This houses the router, server and main.go needed to start the app
 
 # config 
-This houses the configuration variables gotten from which ever environment the app is running or being deployed
+This houses the configuration variables gotten from which ever environment the app is running or being deployed.
+
+# deploy
+This houses the deployments, config file and secret for kubernetes deployment
 
 # internal
 This houses all the logic implementation for the app to work. It includes the controllers, the database, middleware, models, services, port, etc.
@@ -191,3 +194,16 @@ To shut down the app, after terminating, simply run the command ```make down```
 # MOCKING and TESTING
 To mock the port/database for integration testing, simply use the command ```make mock```.
 To run the test files, use the command ```make test```
+
+# DEPLOYMENT
+```azure
+Base_url: http://35.233.6.229:8085/api/v1
+```
+The app has been deployed on Google Cloud Platform and the service can be accessed with
+```http://35.233.6.229:8085```
+To test if the service is online, use ```http://35.233.6.229:8085/api/v1/ping``` [GET]
+```azure
+sample response
+    
+{"message":"pong"}
+```

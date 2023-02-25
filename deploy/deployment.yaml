@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: exchange-deployment
+  labels:
+    app: exchange
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: exchange
+  template:
+    metadata:
+      labels:
+        app: exchange
+    spec:
+      containers:
+        - name: exchange
+          image: eu.gcr.io/microservices-360520/exchange:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8085
+          env:
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: exchange-secret
+                  key: MONGO_URI
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: exchange-secret
+                  key: JWT_SECRET
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: exchange-conf
+                  key: PORT
+            - name: EXCHANGE_RATE
+              valueFrom:
+                configMapKeyRef:
+                  name: exchange-conf
+                  key: EXCHANGE_RATE
